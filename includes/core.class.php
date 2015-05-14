@@ -41,7 +41,38 @@ class Core {
 	protected $conf;
 
 
-	var $post_types;
+	/**
+	 * Styles
+	 *
+	 * @access: private
+	 * @since : 0.1.0
+	 * @var   : array
+	 */
+
+	private $styles = array();
+
+
+	/**
+	 * Scripts
+	 *
+	 * @access: private
+	 * @since : 0.1.0
+	 * @var   : array
+	 */
+
+	private $scripts = array();
+
+
+	/**
+	 * Post types
+	 *
+	 * @access: private
+	 * @since : 0.1.0
+	 * @var   : object
+	 */
+
+	public $post_types;
+
 
 	/**
 	 * Setup all the necessary constants
@@ -50,7 +81,6 @@ class Core {
 	 */
 
 	const VERSION = '0.1.1';
-
 
 
 	private function __construct( $conf )
@@ -98,8 +128,15 @@ class Core {
 	public function core_hooks()
 	{
 		add_action( 'init', array( &$this, 'register_menus' ) );
-		add_action( 'init', array( &$this, 'native_cpt' ) );
+		add_action( 'init', array( &$this, 'init' ) );
 
+		//Styles
+		add_action( 'init', array( &$this, 'register_styles' ) );
+		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_styles' ) );
+
+		//Scripts
+		add_action( 'init', array( &$this, 'register_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
 	}
 
 
@@ -138,6 +175,81 @@ class Core {
 
 
 	/**
+	 * Register admin styles
+	 *
+	 * @author: Moise Scalzo
+	 * @since : 0.1.1
+	 */
+
+	public function register_styles()
+	{
+		$this->styles = $this->conf['styles'];
+
+		if ( ! empty( $this->styles ) ) {
+
+			foreach ( $this->styles as $name => $args ) {
+				wp_register_style( $name, $args['url'], $args['dependencies'], $args['version'] );
+			}
+		}
+	}
+
+
+	/**
+	 * Enqueue admin styles
+	 *
+	 * @author: Moise Scalzo
+	 * @since : 0.1.1
+	 */
+
+	public function enqueue_styles()
+	{
+		if ( ! empty( $this->styles ) ) {
+
+			foreach ( $this->styles as $name => $args ) {
+				wp_enqueue_style( $name );
+			}
+		}
+	}
+
+
+	/**
+	 * Register admin scripts
+	 *
+	 * @author: Moise Scalzo
+	 * @since : 0.1.0
+	 */
+
+	public function register_scripts()
+	{
+		$this->scripts = $this->conf['scripts'];
+
+		if ( ! empty( $this->scripts ) ) {
+
+			foreach ( $this->scripts as $name => $args ) {
+				wp_register_script( $name, $args['url'], $args['dependencies'], $args['version'], $args['footer'] );
+			}
+		}
+	}
+
+
+	/**
+	 * Enqueue admin scripts
+	 *
+	 * @author: Moise Scalzo
+	 * @since : 0.1.0
+	 */
+
+	public function enqueue_scripts()
+	{
+		foreach ( $this->scripts as $name => $args ) {
+			wp_enqueue_script( $name );
+		}
+
+		//$this->localize_scripts();
+	}
+
+
+	/**
 	 * Register custom menus
 	 */
 
@@ -166,14 +278,13 @@ class Core {
 
 	/**
 	 * Create native Custom Post Type from the base web-site-config file.
+	 *
 	 * @since : 0.1.1
 	 * @access: public
 	 * @return: object
 	 */
 	public function native_cpt()
 	{
-		error_log(var_export( $this->conf['cpt'], true));
-
 		if ( isset( $this->conf['cpt'] ) ) {
 			foreach ( $this->conf['cpt'] as $cpt_name => $cpt_args ) {
 				$this->post_types->$cpt_name = new Cuztom_Post_Type( $cpt_name, $cpt_args );
@@ -181,6 +292,41 @@ class Core {
 		}
 
 		return (object) $this->post_types;
+	}
+
+
+	/**
+	 * Create Custom Taxonomies from the base web-site-config file.
+	 *
+	 * @since : 0.1.1
+	 * @access: public
+	 */
+	public function add_taxonomies()
+	{
+		if ( isset( $this->conf['tax'] ) ) {
+			foreach ( $this->conf['tax'] as $tax ) {
+				$taxonomy = new Cuztom_Taxonomy( $tax['name'], $tax['post_type'], $tax['args'] );
+			}
+		}
+	}
+
+
+	/**
+	 * Methods that must be fired on WP init hook
+	 * due to the WP Cuztom plugin issue.
+	 *
+	 * https://github.com/gizburdt/cuztom/issues/343#issuecomment-100155495
+	 */
+	public function init()
+	{
+		$this->native_cpt();
+		$this->add_taxonomies();
+	}
+
+
+	public function __get( $name )
+	{
+		return $this->$name;
 	}
 
 }
