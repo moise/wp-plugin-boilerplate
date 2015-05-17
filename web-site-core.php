@@ -157,6 +157,46 @@ function fs_meta_boxes()
 		)
 	);
 
+	$core->post_types->artwork->add_meta_box(
+		'highlight',
+		__( 'Mostra in evidenza', 'fs' ),
+		array(
+			array(
+				'name'        => 'yes',
+				'label'       => __( 'Visualizza con dimensioni doppie', 'fs' ),
+				'description' => __( 'L\'anteprima dell\'opera risulterà larga il doppio rispetto alle altre', 'fs' ),
+				'type'        => 'checkbox'
+			)
+		), 'side', 'high'
+	);
+
+	error_log( var_export( $core->post_types, true ) );
+
+	$core->post_types->page->add_meta_box(
+		'home-page-video',
+		__( 'Video', 'fs' ),
+		array(
+			array(
+				'name'        => 'mp4',
+				'label'       => __( 'mp4', 'fs' ),
+				'description' => __( '', 'fs' ),
+				'type'        => 'text'
+			),
+			array(
+				'name'        => 'webm',
+				'label'       => __( 'webm', 'fs' ),
+				'description' => __( '', 'fs' ),
+				'type'        => 'text'
+			),
+			array(
+				'name'        => 'ogv',
+				'label'       => __( 'ogv', 'fs' ),
+				'description' => __( '', 'fs' ),
+				'type'        => 'text'
+			),
+		), 'normal', 'high'
+	);
+
 }
 
 add_action( 'init', 'fs_meta_boxes' );

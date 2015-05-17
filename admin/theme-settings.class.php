@@ -20,7 +20,7 @@
  * @subpackage Plugin_Name/admin
  * @author     Your Name <email@example.com>
  */
-class Plugin_Name_Admin {
+class Theme_Settings {
 
 	/**
 	 * The ID of this plugin.

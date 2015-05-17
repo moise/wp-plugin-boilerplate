@@ -22,6 +22,14 @@ $conf = array(
 			'admin'        => false
 		),
 	),
+	'scripts' => array(
+		'theme-admin' => array(
+			'url'          => COREURI . '/admin/js/theme-admin.js',
+			'dependencies' => array( 'jquery' ),
+			'version'      => '0.1.0',
+			'footer'       => true
+		)
+	),
 	'cpt'     => array(
 		'timeline' => array(
 			'labels'             => array(
@@ -80,6 +88,12 @@ $conf = array(
 			'hierarchical'       => false,
 			'menu_position'      => null,
 			'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt' )
+		),
+		'page' => array(),
+		'post'     => array(
+			'labels' => array(
+				'menu_name' => _x( 'News', 'admin menu', 'fs' )
+			)
 		)
 	),
 	'tax'     => array(
