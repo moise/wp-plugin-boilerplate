@@ -312,6 +312,32 @@ class Core {
 
 
 	/**
+	 * Create Custom Sidebars from the base web-site-config file.
+	 *
+	 * @since : 0.1.1
+	 * @access: public
+	 */
+	public function add_sidebars()
+	{
+		if ( isset( $this->conf['sidebars'] ) ) {
+			foreach ( $this->conf['sidebars'] as $sb ) {
+				$taxonomy[] = new Cuztom_Sidebar( [
+						'name'          => $sb['name'],
+						'id'            => $sb['id'],
+						'description'   => $sb['description'],
+						'class'         => $sb['class'],
+						'before_widget' => $sb['before_widget'],
+						'after_widget'  => $sb['after_widget'],
+						'before_title'  => $sb['before_title'],
+						'after_title'   => $sb['after_title']
+					]
+				);
+			}
+		}
+	}
+
+
+	/**
 	 * Methods that must be fired on WP init hook
 	 * due to the WP Cuztom plugin issue.
 	 *
@@ -321,6 +347,7 @@ class Core {
 	{
 		$this->native_cpt();
 		$this->add_taxonomies();
+		$this->add_sidebars();
 	}
 
 
