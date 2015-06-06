@@ -221,7 +221,8 @@ class Core {
 
 	public function register_scripts()
 	{
-		$this->scripts = $this->conf['scripts'];
+
+		$this->scripts = ( isset( $this->conf['scripts'] ) && ! empty( $this->conf['scripts'] ) ? $this->conf['scripts'] : [ ] );
 
 		if ( ! empty( $this->scripts ) ) {
 
@@ -321,7 +322,7 @@ class Core {
 	{
 		if ( isset( $this->conf['sidebars'] ) ) {
 			foreach ( $this->conf['sidebars'] as $sb ) {
-				$taxonomy[] = new Cuztom_Sidebar( [
+				new Cuztom_Sidebar( [
 						'name'          => $sb['name'],
 						'id'            => $sb['id'],
 						'description'   => $sb['description'],
@@ -334,6 +335,7 @@ class Core {
 				);
 			}
 		}
+
 	}
 
 
